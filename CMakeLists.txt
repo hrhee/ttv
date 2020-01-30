@@ -21,12 +21,13 @@ include_directories(
   "${PROJECT_SOURCE_DIR}/include"
   "${PROJECT_SOURCE_DIR}/include/tlib"
   "${PROJECT_SOURCE_DIR}/include/tlib/detail"
+  "${PROJECT_SOURCE_DIR}/test/include"
 )
 
 add_subdirectory(include)
 add_subdirectory(example) 
 
-#enable_testing() 
-#add_subdirectory(test)
+enable_testing() 
+add_subdirectory(test)
 
 
