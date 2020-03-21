@@ -76,8 +76,10 @@ before_script:
 
 # use script: to execute build steps
 script:
-  - make -C test -j8
-  - ./test/bin/main
+  - mkdir build
+  - cd build
+  - cmake ../
+  - cmake --build .
 
 after_success:
 #  - .ci/report_coverage.sh
