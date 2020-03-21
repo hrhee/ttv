@@ -52,7 +52,7 @@ addons:
     - lcov
 
 install:
-  - git clone -b master https://github.com/bassoy/ttv ttv
+  - git clone -b master https://github.com/hrhee/ttv ttv
   - cd ttv
   - export CXX=${COMPILER}
   - ${CXX} --version
