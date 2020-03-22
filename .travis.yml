@@ -83,6 +83,7 @@ script:
   - cmake --build .
 
 after_success:
+  - ctest
 #  - .ci/report_coverage.sh
 #  - curl -s https://codecov.io/bash > cov.sh
 #  - chmod +x cov.sh
