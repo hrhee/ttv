@@ -22,6 +22,8 @@
 #include <mkl.h>
 #endif
 
+#include <iostream>
+
 
 namespace tlib::detail {
 
@@ -83,6 +85,56 @@ static inline void gemv_row_parallel(
 		c[i] = sum;
 	}
 }	
+
+template<class value_t, class size_t>
+static inline void gemv_row_parallel_chunk(
+		value_t const*const __restrict a,
+		value_t const*const __restrict b,
+		value_t      *const __restrict c,
+		size_t const M, // nn
+		size_t const N, // na_m
+		size_t const lda) // na_m usually as
+{
+  constexpr auto NB = 32;
+  const unsigned n = N/NB;
+  const unsigned NBmod = N%NB;
+
+	#pragma omp parallel for firstprivate(a, b, c, N, lda, M, NB, NBmod) schedule(dynamic) 
+	for(auto row_idx = 0ul; row_idx < M; ++row_idx){ // over row
+
+		auto const*const __restrict a_row = a + row_idx * lda;
+		auto sum = value_t{};
+
+    for(auto col_chunk_idx = 0ul; col_chunk_idx < n; ++col_chunk_idx) {
+
+      auto const*const __restrict a_row_chunk = a_row + col_chunk_idx * NB;
+      auto const*const __restrict b_chunk = b + col_chunk_idx * NB;
+
+      #pragma omp simd reduction (+:sum) // aligned (arow,b : 32)
+      for(auto col_idx = 0ul; col_idx < NB; ++col_idx){ // over column
+        sum += a_row_chunk[col_idx] * b_chunk[col_idx];
+      }
+    }
+
+    c[row_idx] = sum;
+
+    // calc remaining elements: range(n, n+NBmod) 
+    auto const*const __restrict a_row_remain = a + row_idx * lda + n * NB;
+    auto const*const __restrict b_remain = b + n * NB;
+
+    sum = value_t{};
+
+    #pragma omp simd safelen(NB)
+    for(auto col_idx_remain = 0ul; col_idx_remain < NBmod; ++col_idx_remain){ // over column
+      sum += a_row_remain[col_idx_remain] * b_remain[col_idx_remain];
+    }
+
+    c[row_idx] += sum;
+	} // end over row
+}	
+
+
+
 /** \brief computes 2d-slice-times-vector
  *
  * a is a 2d-slice (M x N) i.e. (na_pia_1 x na_m or nn x na_m) where every COLUMN is CONTIGUOUSLY stored in memory.
