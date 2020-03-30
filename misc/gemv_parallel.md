@@ -15,7 +15,7 @@ As reference the performance of the sequential procedure and the implementation 
 
 The figures show that the prallel routines outperform the sequential routines,
 and for matrices of dimension from 2^2 x 2^2 to 2^11 x 2^11 the the BLAS routines perform better than the proposed parallel routines.
-However, starting from matrices of dimension 2^12 x 2^12 the proposed parallel procedures take an overhand over the BLAS routines.  
+However, starting from matrices of dimension 2^12 x 2^12 the proposed parallel procedures catch up to the BLAS routines and even gain an upper hand in case of the major-row format matrices.  
 
 ![mtv_col_blas](https://github.com/hrhee/ttv/blob/master/misc/mtv_col_blas.png)
 
