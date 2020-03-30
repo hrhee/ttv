@@ -20,3 +20,6 @@ However, starting from matrices of dimension 2^12 x 2^12 the proposed parallel p
 ![mtv_col_blas](https://github.com/hrhee/ttv/blob/master/misc/mtv_col_blas.png)
 
 ![mtv_row_blas](https://github.com/hrhee/ttv/blob/master/misc/mtv_row_blas.png)
+
+The routines are build with the g++ compiler, e.g.
+`g++ -I../include/ -std=c++17 -Ofast -fopenmp -DUSE_OPENBLAS main.cpp -o main` 
